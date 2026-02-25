@@ -31,8 +31,8 @@ jobs:
           # Copy MainActivity.kt from repo
           cp MainActivity.kt app/src/main/java/com/plussub/MainActivity.kt
           
-          # Generate activity_main.xml (FL Studio Style Timeline)
-          cat > app/src/main/res/layout/activity_main.xml << 'EOF'
+          # Generate activity_main.xml
+          cat > app/src/main/res/layout/activity_main.xml << 'XML_EOF'
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
@@ -316,10 +316,10 @@ jobs:
     </LinearLayout>
 
 </LinearLayout>
-EOF
+XML_EOF
           
           # Generate strings.xml
-          cat > app/src/main/res/values/strings.xml << 'EOF'
+          cat > app/src/main/res/values/strings.xml << 'XML_EOF'
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">PlusSub</string>
@@ -329,10 +329,10 @@ EOF
         <item>Normal</item>
     </string-array>
 </resources>
-EOF
+XML_EOF
           
           # Generate AndroidManifest.xml
-          cat > app/src/main/AndroidManifest.xml << 'EOF'
+          cat > app/src/main/AndroidManifest.xml << 'XML_EOF'
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
@@ -358,9 +358,9 @@ EOF
         </activity>
     </application>
 </manifest>
-EOF
+XML_EOF
           
-          # Generate blue icon (1x1 blue pixel)
+          # Generate blue icon
           echo "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==" | base64 -d > app/src/main/res/mipmap-hdpi/ic_launcher.png
           
           # Generate settings.gradle
