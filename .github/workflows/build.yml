@@ -31,7 +31,7 @@ jobs:
           # Copy your KT file
           cp MainActivity.kt app/src/main/java/com/plussub/MainActivity.kt
           
-          # Generate activity_main.xml (COMPLETE LAYOUT)
+          # Generate activity_main.xml (FIXED - removed list_divider)
           cat > app/src/main/res/layout/activity_main.xml << 'EOF'
           <?xml version="1.0" encoding="utf-8"?>
           <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -39,9 +39,7 @@ jobs:
               android:layout_height="match_parent"
               android:orientation="vertical"
               android:padding="16dp"
-              android:background="#FFFFFF"
-              android:showDividers="middle"
-              android:divider="?android:dividerHorizontal">
+              android:background="#FFFFFF">
 
               <!-- Header -->
               <LinearLayout
@@ -269,7 +267,7 @@ jobs:
                       android:layout_weight="1"
                       android:text="LOAD"
                       android:backgroundTint="#2196F3"
-                      android:layout_marginRight="4dp"
+                      android:layout_marginEnd="4dp"
                       android:textColor="#FFFFFF"
                       android:textStyle="bold"/>
 
@@ -280,8 +278,8 @@ jobs:
                       android:layout_weight="1"
                       android:text="PLAY"
                       android:backgroundTint="#4CAF50"
-                      android:layout_marginLeft="4dp"
-                      android:layout_marginRight="4dp"
+                      android:layout_marginEnd="4dp"
+                      android:layout_marginStart="4dp"
                       android:textColor="#FFFFFF"
                       android:textStyle="bold"/>
 
@@ -292,7 +290,7 @@ jobs:
                       android:layout_weight="1"
                       android:text="SAVE"
                       android:backgroundTint="#F44336"
-                      android:layout_marginLeft="4dp"
+                      android:layout_marginStart="4dp"
                       android:textColor="#FFFFFF"
                       android:textStyle="bold"/>
               </LinearLayout>
@@ -342,7 +340,7 @@ jobs:
           </manifest>
           EOF
           
-          # Generate blue icon
+          # Generate blue icon (simple blue square)
           echo "iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAAAXNSR0IArs4c6QAAAARzQklUCAgICHwIZIgAAAAZdEVYdFNvZnR3YXJlAHd3dy5pbmtzY2FwZS5vcmeb7jwaAAABIElEQVR4nO3asY2EMBQF0d2K2A4oYyOgI3IgQqI7mgULJHICW45A3M/67Gvrr3R+3/d9AAAAAAAAAAAAAAA8m1prXdc6pZRSa63f933f9w3AOqWU1lqnlFJKaa31+77v+wZgHSml1lrruq5TSiml1H3f930DsM6UUmqtdV3XKaWUUh9/fd83AOuUUmqtdV3XKaWUUh9/fd83AOuUUmqtdV3XKaWUUh9/fd83AOuUUmqtdV3XKaWUUh9/fd83AOuUUmqtdV3XKaWUUh9/fd83AOuUUmqtdV3XKaWUUh9/fd83AOuUUmqtdV3XKaWUUh9/fd83AOuUUmqtdV3XKaWUUh9/fd83AAAAAAAAAAAAwP98A8vEeJhOJYScAAAAAElFTkSuQmCC" | base64 -d > app/src/main/res/mipmap-hdpi/ic_launcher.png
           
           # Generate settings.gradle
