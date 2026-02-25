@@ -19,7 +19,7 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Create Android project structure
+      - name: Generate complete Android project
         run: |
           # Create all directories
           mkdir -p app/src/main/java/com/plussub
@@ -28,138 +28,130 @@ jobs:
           mkdir -p app/src/main/res/mipmap-hdpi
           mkdir -p gradle/wrapper
           
-          # Copy MainActivity.kt
+          # Copy your KT file
           cp MainActivity.kt app/src/main/java/com/plussub/MainActivity.kt
           
-          # Create activity_main.xml
+          # Generate activity_main.xml
           cat > app/src/main/res/layout/activity_main.xml << 'EOF'
           <?xml version="1.0" encoding="utf-8"?>
           <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
               android:orientation="vertical"
-              android:padding="16dp">
+              android:padding="16dp"
+              android:background="#FFFFFF">
               
               <TextView
                   android:layout_width="wrap_content"
                   android:layout_height="wrap_content"
                   android:text="PlusSub"
-                  android:textSize="32sp"
+                  android:textSize="28sp"
                   android:textColor="#2196F3"
-                  android:layout_gravity="center_horizontal"/>
+                  android:textStyle="bold"
+                  android:layout_gravity="center_horizontal"
+                  android:layout_marginBottom="20dp"/>
               
               <TextView
                   android:id="@+id/statusText"
                   android:layout_width="match_parent"
                   android:layout_height="wrap_content"
                   android:text="Load a song"
-                  android:padding="16dp"
-                  android:layout_marginTop="16dp"
-                  android:background="#F0F0F0"/>
+                  android:padding="12dp"
+                  android:background="#F0F0F0"
+                  android:layout_marginBottom="16dp"/>
               
               <ScrollView
                   android:layout_width="match_parent"
                   android:layout_height="200dp"
-                  android:layout_marginTop="16dp">
+                  android:background="#F5F5F5">
                   <LinearLayout
-                      android:id="@+id/gridLayout"
+                      android:id="@+id/gridContainer"
                       android:layout_width="match_parent"
                       android:layout_height="wrap_content"
                       android:orientation="vertical"/>
               </ScrollView>
               
+              <TextView
+                  android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:text="SUB BASS"
+                  android:textColor="#2196F3"
+                  android:textSize="12sp"
+                  android:layout_marginTop="16dp"/>
+              
               <LinearLayout
                   android:layout_width="match_parent"
                   android:layout_height="wrap_content"
                   android:orientation="horizontal"
-                  android:layout_marginTop="16dp">
-                  
-                  <Button
-                      android:id="@+id/btnLoad"
-                      android:layout_width="0dp"
-                      android:layout_height="wrap_content"
-                      android:layout_weight="1"
-                      android:text="LOAD"
-                      android:backgroundTint="#2196F3"
-                      android:layout_marginRight="4dp"/>
-                  
-                  <Button
-                      android:id="@+id/btnPlay"
-                      android:layout_width="0dp"
-                      android:layout_height="wrap_content"
-                      android:layout_weight="1"
-                      android:text="PLAY"
-                      android:backgroundTint="#4CAF50"
-                      android:layout_marginLeft="4dp"
-                      android:layout_marginRight="4dp"/>
-                  
-                  <Button
-                      android:id="@+id/btnSave"
-                      android:layout_width="0dp"
-                      android:layout_height="wrap_content"
-                      android:layout_weight="1"
-                      android:text="SAVE"
-                      android:backgroundTint="#F44336"
-                      android:layout_marginLeft="4dp"/>
+                  android:background="#F0F0F0"
+                  android:padding="12dp"
+                  android:layout_marginTop="8dp">
+                  <TextView android:text="Octave:" android:layout_width="80dp" android:layout_height="wrap_content"/>
+                  <Spinner android:id="@+id/octaveSpinner" android:layout_width="0dp" android:layout_height="40dp" android:layout_weight="1"/>
               </LinearLayout>
               
+              <LinearLayout
+                  android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:orientation="horizontal"
+                  android:background="#F0F0F0"
+                  android:padding="12dp"
+                  android:layout_marginTop="2dp">
+                  <TextView android:text="Volume:" android:layout_width="80dp" android:layout_height="wrap_content"/>
+                  <SeekBar android:id="@+id/volumeSeekBar" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:max="100" android:progress="70"/>
+                  <TextView android:id="@+id/volumeValue" android:layout_width="40dp" android:layout_height="wrap_content" android:text="70%" android:gravity="center"/>
+              </LinearLayout>
+              
+              <LinearLayout
+                  android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:orientation="horizontal"
+                  android:layout_marginTop="20dp">
+                  <Button android:id="@+id/loadBtn" android:layout_width="0dp" android:layout_height="50dp" android:layout_weight="1" android:text="LOAD" android:backgroundTint="#2196F3" android:layout_marginRight="4dp"/>
+                  <Button android:id="@+id/playBtn" android:layout_width="0dp" android:layout_height="50dp" android:layout_weight="1" android:text="PLAY" android:backgroundTint="#4CAF50" android:layout_marginLeft="4dp" android:layout_marginRight="4dp"/>
+                  <Button android:id="@+id/saveBtn" android:layout_width="0dp" android:layout_height="50dp" android:layout_weight="1" android:text="SAVE" android:backgroundTint="#F44336" android:layout_marginLeft="4dp"/>
+              </LinearLayout>
           </LinearLayout>
           EOF
           
-          # AndroidManifest.xml
+          # Generate strings.xml
+          cat > app/src/main/res/values/strings.xml << 'EOF'
+          <resources>
+              <string name="app_name">PlusSub</string>
+              <string-array name="octave_options">
+                  <item>-2 oct</item>
+                  <item>-1 oct</item>
+                  <item>Normal</item>
+              </string-array>
+          </resources>
+          EOF
+          
+          # Generate AndroidManifest.xml
           cat > app/src/main/AndroidManifest.xml << 'EOF'
           <?xml version="1.0" encoding="utf-8"?>
           <manifest xmlns:android="http://schemas.android.com/apk/res/android"
               package="com.plussub">
               <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-              <application
-                  android:allowBackup="true"
-                  android:icon="@mipmap/ic_launcher"
-                  android:label="PlusSub"
-                  android:theme="@style/Theme.AppCompat.Light.DarkActionBar">
-                  <activity
-                      android:name=".MainActivity"
-                      android:exported="true">
-                      <intent-filter>
-                          <action android:name="android.intent.action.MAIN" />
-                          <category android:name="android.intent.category.LAUNCHER" />
-                      </intent-filter>
+              <application android:allowBackup="true" android:icon="@mipmap/ic_launcher" android:label="PlusSub" android:theme="@style/Theme.AppCompat.Light.DarkActionBar">
+                  <activity android:name=".MainActivity" android:exported="true">
+                      <intent-filter><action android:name="android.intent.action.MAIN"/><category android:name="android.intent.category.LAUNCHER"/></intent-filter>
                   </activity>
               </application>
           </manifest>
           EOF
           
-          # strings.xml
-          cat > app/src/main/res/values/strings.xml << 'EOF'
-          <resources>
-              <string name="app_name">PlusSub</string>
-          </resources>
-          EOF
+          # Generate blue icon
+          echo "iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAAAXNSR0IArs4c6QAAAARzQklUCAgICHwIZIgAAAAZdEVYdFNvZnR3YXJlAHd3dy5pbmtzY2FwZS5vcmeb7jwaAAABIElEQVR4nO3asY2EMBQF0d2K2A4oYyOgI3IgQqI7mgULJHICW45A3M/67Gvrr3R+3/d9AAAAAAAAAAAAAAA8m1prXdc6pZRSa63f933f9w3AOqWU1lqnlFJKaa31+77v+wZgHSml1lrruq5TSiml1H3f930DsM6UUmqtdV3XKaWUUh9/fd83AOuUUmqtdV3XKaWUUh9/fd83AOuUUmqtdV3XKaWUUh9/fd83AOuUUmqtdV3XKaWUUh9/fd83AOuUUmqtdV3XKaWUUh9/fd83AOuUUmqtdV3XKaWUUh9/fd83AOuUUmqtdV3XKaWUUh9/fd83AOuUUmqtdV3XKaWUUh9/fd83AOuUUmqtdV3XKaWUUh9/fd83AAAAAAAAAAAAwP98A8vEeJhOJYScAAAAAElFTkSuQmCC" | base64 -d > app/src/main/res/mipmap-hdpi/ic_launcher.png
           
-          # Create blue icon (simple blue PNG base64)
-          echo "iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAAAXNSR0IArs4c6QAAAARzQklUCAgICHwIZIgAAAAZdEVYdFNvZnR3YXJlAHd3dy5pbmtzY2FwZS5vcmeb7jwaAAABIElEQVR4nO3asY2EMBQF0d2K2A4oYyOgI3IgQqI7mgULJHICW45A3M/67Gvrr3R+3/d9AAAAAAAAAAAAAAA8m1prXdc6pZRSa63f933f9w3AOqWU1lqnlFJKaa31+77v+wZgHSml1lrruq5TSiml1H3f930DsM6UUmqtdV3XKaWUUh9/fd83AOuUUmqtdV3XKaWUUh9/fd83AOuUUmqtdV3XKaWUUh9/fd83AOuUUmqtdV3XKaWUUh9/fd83AOuUUmqtdV3XKaWUUh9/fd83AOuUUmqtdV3XKaWUUh9/fd83AOuUUmqtdV3XKaWUUh9/fd83AOuUUmqtdV3XKaWUUh9/fd83AOuUUmqtdV3XKaWUUh9/fd83AOuUUmqtdV3XKaWUUh9/fd83AAAAAAAAAAAAwP98A8vEeJhOJYScAAAAAElFTkSuQmCC" | base64 -d > app/src/main/res/mipmap-hdpi/ic_launcher.png
-          
-          # settings.gradle
+          # Generate settings.gradle
           cat > settings.gradle << 'EOF'
-          pluginManagement {
-              repositories {
-                  google()
-                  mavenCentral()
-                  gradlePluginPortal()
-              }
-          }
-          dependencyResolutionManagement {
-              repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
-              repositories {
-                  google()
-                  mavenCentral()
-              }
-          }
+          pluginManagement { repositories { google() mavenCentral() gradlePluginPortal() } }
+          dependencyResolutionManagement { repositories { google() mavenCentral() } }
           rootProject.name = "PlusSub"
           include ':app'
           EOF
           
-          # Project build.gradle
+          # Generate build.gradle (project)
           cat > build.gradle << 'EOF'
           plugins {
               id 'com.android.application' version '8.2.2' apply false
@@ -167,17 +159,15 @@ jobs:
           }
           EOF
           
-          # App build.gradle
+          # Generate app/build.gradle
           cat > app/build.gradle << 'EOF'
           plugins {
               id 'com.android.application'
               id 'org.jetbrains.kotlin.android'
           }
-          
           android {
               namespace 'com.plussub'
               compileSdk 34
-              
               defaultConfig {
                   applicationId "com.plussub"
                   minSdk 24
@@ -185,43 +175,28 @@ jobs:
                   versionCode 1
                   versionName "1.0"
               }
-              
-              buildTypes {
-                  release {
-                      minifyEnabled false
-                      proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-                  }
-              }
-              
               compileOptions {
                   sourceCompatibility JavaVersion.VERSION_17
                   targetCompatibility JavaVersion.VERSION_17
               }
-              
               kotlinOptions {
                   jvmTarget = '17'
               }
           }
-          
           dependencies {
               implementation 'androidx.core:core-ktx:1.12.0'
               implementation 'androidx.appcompat:appcompat:1.6.1'
               implementation 'com.google.android.material:material:1.11.0'
-              implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
           }
           EOF
           
-          # gradle.properties
+          # Generate gradle.properties
           cat > gradle.properties << 'EOF'
           org.gradle.jvmargs=-Xmx2048m
           android.useAndroidX=true
-          kotlin.code.style=official
           EOF
           
-          # Create empty proguard file
-          touch app/proguard-rules.pro
-          
-          # Create gradle-wrapper.properties
+          # Generate gradle wrapper
           cat > gradle/wrapper/gradle-wrapper.properties << 'EOF'
           distributionBase=GRADLE_USER_HOME
           distributionPath=wrapper/dists
@@ -229,34 +204,18 @@ jobs:
           zipStoreBase=GRADLE_USER_HOME
           zipStorePath=wrapper/dists
           EOF
-
-      - name: Generate gradle wrapper
-        run: |
+          
           # Download gradle-wrapper.jar
-          wget -O gradle/wrapper/gradle-wrapper.jar https://github.com/gradle/gradle/raw/v8.6.0/gradle/wrapper/gradle-wrapper.jar
+          wget -q -O gradle/wrapper/gradle-wrapper.jar https://github.com/gradle/gradle/raw/v8.6.0/gradle/wrapper/gradle-wrapper.jar
           
-          # Create gradlew script
-          cat > gradlew << 'EOF'
-          #!/bin/sh
+          # Create gradlew
+          echo '#!/bin/sh
           DIR="$(cd "$(dirname "$0")" && pwd)"
-          java -classpath "$DIR/gradle/wrapper/gradle-wrapper.jar" org.gradle.wrapper.GradleWrapperMain "$@"
-          EOF
-          
-          # Create gradlew.bat
-          cat > gradlew.bat << 'EOF'
-          @if "%DEBUG%" == "" @echo off
-          @rem Set local scope for the variables with windows NT shell
-          if "%OS%"=="Windows_NT" setlocal
-          set DIRNAME=%~dp0
-          set CLASSPATH=%DIRNAME%gradle\wrapper\gradle-wrapper.jar
-          "%JAVA_HOME%\bin\java.exe" -classpath "%CLASSPATH%" org.gradle.wrapper.GradleWrapperMain %*
-          EOF
-          
-          # Make gradlew executable
+          java -classpath "$DIR/gradle/wrapper/gradle-wrapper.jar" org.gradle.wrapper.GradleWrapperMain "$@"' > gradlew
           chmod +x gradlew
 
       - name: Build APK
-        run: ./gradlew assembleDebug --stacktrace
+        run: ./gradlew assembleDebug
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
