@@ -32,7 +32,7 @@ jobs:
           cp MainActivity.kt app/src/main/java/com/plussub/MainActivity.kt
           
           # Generate activity_main.xml
-          cat > app/src/main/res/layout/activity_main.xml << 'XML_EOF'
+          cat > app/src/main/res/layout/activity_main.xml << 'XML_END'
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
@@ -40,14 +40,11 @@ jobs:
     android:orientation="vertical"
     android:padding="12dp"
     android:background="#FFFFFF">
-
-    <!-- Header -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:layout_marginBottom="12dp">
-
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -56,7 +53,6 @@ jobs:
             android:textSize="28sp"
             android:textColor="#2196F3"
             android:textStyle="bold"/>
-
         <TextView
             android:id="@+id/songNameText"
             android:layout_width="wrap_content"
@@ -66,22 +62,17 @@ jobs:
             android:maxLines="1"
             android:ellipsize="end"/>
     </LinearLayout>
-
-    <!-- Waveform Placeholder -->
     <View
         android:id="@+id/waveformView"
         android:layout_width="match_parent"
         android:layout_height="60dp"
         android:background="#F0F0F0"
         android:layout_marginBottom="8dp"/>
-
-    <!-- Time Range and Zoom -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:layout_marginBottom="8dp">
-
         <TextView
             android:id="@+id/timeRangeText"
             android:layout_width="0dp"
@@ -89,21 +80,18 @@ jobs:
             android:layout_weight="1"
             android:text="0:00 - 0:00"
             android:textSize="12sp"/>
-
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Zoom:"
             android:textSize="12sp"
             android:layout_marginEnd="8dp"/>
-
         <SeekBar
             android:id="@+id/zoomSeekBar"
             android:layout_width="150dp"
             android:layout_height="wrap_content"
             android:max="100"
             android:progress="43"/>
-
         <TextView
             android:id="@+id/zoomPercentText"
             android:layout_width="50dp"
@@ -112,8 +100,6 @@ jobs:
             android:textSize="12sp"
             android:gravity="center"/>
     </LinearLayout>
-
-    <!-- Timeline Container (Horizontal Scroll) -->
     <HorizontalScrollView
         android:id="@+id/scrollHorizontal"
         android:layout_width="match_parent"
@@ -121,48 +107,36 @@ jobs:
         android:background="#F5F5F5"
         android:padding="4dp"
         android:scrollbars="horizontal">
-
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:orientation="vertical">
-
-            <!-- Time Ruler -->
             <LinearLayout
                 android:id="@+id/timelineRuler"
                 android:layout_width="wrap_content"
                 android:layout_height="40dp"
                 android:orientation="horizontal"
                 android:background="#E0E0E0"/>
-
-            <!-- Bar Numbers -->
             <LinearLayout
                 android:id="@+id/barNumbersLayout"
                 android:layout_width="wrap_content"
                 android:layout_height="60dp"
                 android:orientation="horizontal"
                 android:background="#F0F0F0"/>
-
-            <!-- Chord Names -->
             <LinearLayout
                 android:id="@+id/chordNamesLayout"
                 android:layout_width="wrap_content"
                 android:layout_height="60dp"
                 android:orientation="horizontal"
                 android:background="#FFFFFF"/>
-
-            <!-- Bass Blocks (Clickable) -->
             <LinearLayout
                 android:id="@+id/bassBlocksLayout"
                 android:layout_width="wrap_content"
                 android:layout_height="60dp"
                 android:orientation="horizontal"
                 android:background="#F5F5F5"/>
-
         </LinearLayout>
     </HorizontalScrollView>
-
-    <!-- Status Text -->
     <TextView
         android:id="@+id/statusText"
         android:layout_width="match_parent"
@@ -172,8 +146,6 @@ jobs:
         android:background="#F0F0F0"
         android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"/>
-
-    <!-- Sub Bass Controls -->
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -181,7 +153,6 @@ jobs:
         android:textColor="#2196F3"
         android:textSize="12sp"
         android:layout_marginTop="8dp"/>
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -189,20 +160,17 @@ jobs:
         android:background="#F0F0F0"
         android:padding="8dp"
         android:layout_marginTop="4dp">
-
         <TextView
             android:layout_width="60dp"
             android:layout_height="wrap_content"
             android:text="Octave:"
             android:textSize="14sp"/>
-
         <Spinner
             android:id="@+id/octaveSpinner"
             android:layout_width="0dp"
             android:layout_height="40dp"
             android:layout_weight="1"/>
     </LinearLayout>
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -210,13 +178,11 @@ jobs:
         android:background="#F0F0F0"
         android:padding="8dp"
         android:layout_marginTop="2dp">
-
         <TextView
             android:layout_width="60dp"
             android:layout_height="wrap_content"
             android:text="Volume:"
             android:textSize="14sp"/>
-
         <SeekBar
             android:id="@+id/volumeSeekBar"
             android:layout_width="0dp"
@@ -224,7 +190,6 @@ jobs:
             android:layout_weight="1"
             android:max="100"
             android:progress="70"/>
-
         <TextView
             android:id="@+id/volumeValue"
             android:layout_width="40dp"
@@ -233,8 +198,6 @@ jobs:
             android:textSize="14sp"
             android:gravity="center"/>
     </LinearLayout>
-
-    <!-- EQ Controls -->
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -242,7 +205,6 @@ jobs:
         android:textColor="#FF9800"
         android:textSize="12sp"
         android:layout_marginTop="8dp"/>
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -253,7 +215,6 @@ jobs:
         <TextView android:layout_width="50dp" android:layout_height="wrap_content" android:text="Bass:"/>
         <SeekBar android:id="@+id/bassSeekBar" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:max="100" android:progress="50"/>
     </LinearLayout>
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -264,7 +225,6 @@ jobs:
         <TextView android:layout_width="50dp" android:layout_height="wrap_content" android:text="Mid:"/>
         <SeekBar android:id="@+id/midSeekBar" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:max="100" android:progress="50"/>
     </LinearLayout>
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -275,14 +235,11 @@ jobs:
         <TextView android:layout_width="50dp" android:layout_height="wrap_content" android:text="Treble:"/>
         <SeekBar android:id="@+id/trebleSeekBar" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:max="100" android:progress="50"/>
     </LinearLayout>
-
-    <!-- Control Buttons -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:layout_marginTop="12dp">
-
         <Button
             android:id="@+id/loadBtn"
             android:layout_width="0dp"
@@ -292,7 +249,6 @@ jobs:
             android:backgroundTint="#2196F3"
             android:layout_marginEnd="4dp"
             android:textColor="#FFFFFF"/>
-
         <Button
             android:id="@+id/playBtn"
             android:layout_width="0dp"
@@ -303,7 +259,6 @@ jobs:
             android:layout_marginEnd="4dp"
             android:layout_marginStart="4dp"
             android:textColor="#FFFFFF"/>
-
         <Button
             android:id="@+id/saveBtn"
             android:layout_width="0dp"
@@ -314,12 +269,11 @@ jobs:
             android:layout_marginStart="4dp"
             android:textColor="#FFFFFF"/>
     </LinearLayout>
-
 </LinearLayout>
-XML_EOF
+XML_END
           
           # Generate strings.xml
-          cat > app/src/main/res/values/strings.xml << 'XML_EOF'
+          cat > app/src/main/res/values/strings.xml << 'STRINGS_END'
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">PlusSub</string>
@@ -329,24 +283,21 @@ XML_EOF
         <item>Normal</item>
     </string-array>
 </resources>
-XML_EOF
+STRINGS_END
           
           # Generate AndroidManifest.xml
-          cat > app/src/main/AndroidManifest.xml << 'XML_EOF'
+          cat > app/src/main/AndroidManifest.xml << 'MANIFEST_END'
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
-
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
-
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="PlusSub"
         android:theme="@style/Theme.AppCompat.Light.DarkActionBar"
         android:requestLegacyExternalStorage="true">
-
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -358,7 +309,7 @@ XML_EOF
         </activity>
     </application>
 </manifest>
-XML_EOF
+MANIFEST_END
           
           # Generate blue icon
           echo "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==" | base64 -d > app/src/main/res/mipmap-hdpi/ic_launcher.png
@@ -404,11 +355,9 @@ plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
 }
-
 android {
     namespace 'com.plussub'
     compileSdk 34
-    
     defaultConfig {
         applicationId "com.plussub"
         minSdk 24
@@ -416,24 +365,20 @@ android {
         versionCode 1
         versionName "1.0"
     }
-    
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
-    
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_17
         targetCompatibility JavaVersion.VERSION_17
     }
-    
     kotlinOptions {
         jvmTarget = '17'
     }
 }
-
 dependencies {
     implementation 'androidx.core:core-ktx:1.12.0'
     implementation 'androidx.appcompat:appcompat:1.6.1'
