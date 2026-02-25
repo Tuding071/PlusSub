@@ -38,8 +38,7 @@ jobs:
               android:layout_width="match_parent"
               android:layout_height="match_parent"
               android:orientation="vertical"
-              android:padding="16dp"
-              android:background="#FFFFFF">
+              android:padding="16dp">
               
               <TextView
                   android:layout_width="wrap_content"
@@ -47,9 +46,7 @@ jobs:
                   android:text="PlusSub"
                   android:textSize="28sp"
                   android:textColor="#2196F3"
-                  android:textStyle="bold"
-                  android:layout_gravity="center_horizontal"
-                  android:layout_marginBottom="20dp"/>
+                  android:layout_gravity="center_horizontal"/>
               
               <TextView
                   android:id="@+id/statusText"
@@ -58,12 +55,12 @@ jobs:
                   android:text="Load a song"
                   android:padding="12dp"
                   android:background="#F0F0F0"
-                  android:layout_marginBottom="16dp"/>
+                  android:layout_marginTop="16dp"/>
               
               <ScrollView
                   android:layout_width="match_parent"
                   android:layout_height="200dp"
-                  android:background="#F5F5F5">
+                  android:layout_marginTop="16dp">
                   <LinearLayout
                       android:id="@+id/gridContainer"
                       android:layout_width="match_parent"
@@ -76,7 +73,6 @@ jobs:
                   android:layout_height="wrap_content"
                   android:text="SUB BASS"
                   android:textColor="#2196F3"
-                  android:textSize="12sp"
                   android:layout_marginTop="16dp"/>
               
               <LinearLayout
@@ -99,7 +95,7 @@ jobs:
                   android:layout_marginTop="2dp">
                   <TextView android:text="Volume:" android:layout_width="80dp" android:layout_height="wrap_content"/>
                   <SeekBar android:id="@+id/volumeSeekBar" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:max="100" android:progress="70"/>
-                  <TextView android:id="@+id/volumeValue" android:layout_width="40dp" android:layout_height="wrap_content" android:text="70%" android:gravity="center"/>
+                  <TextView android:id="@+id/volumeValue" android:layout_width="40dp" android:layout_height="wrap_content" android:text="70%"/>
               </LinearLayout>
               
               <LinearLayout
@@ -132,9 +128,16 @@ jobs:
           <manifest xmlns:android="http://schemas.android.com/apk/res/android"
               package="com.plussub">
               <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-              <application android:allowBackup="true" android:icon="@mipmap/ic_launcher" android:label="PlusSub" android:theme="@style/Theme.AppCompat.Light.DarkActionBar">
+              <application
+                  android:allowBackup="true"
+                  android:icon="@mipmap/ic_launcher"
+                  android:label="PlusSub"
+                  android:theme="@style/Theme.AppCompat.Light.DarkActionBar">
                   <activity android:name=".MainActivity" android:exported="true">
-                      <intent-filter><action android:name="android.intent.action.MAIN"/><category android:name="android.intent.category.LAUNCHER"/></intent-filter>
+                      <intent-filter>
+                          <action android:name="android.intent.action.MAIN" />
+                          <category android:name="android.intent.category.LAUNCHER" />
+                      </intent-filter>
                   </activity>
               </application>
           </manifest>
@@ -143,19 +146,38 @@ jobs:
           # Generate blue icon
           echo "iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAAAXNSR0IArs4c6QAAAARzQklUCAgICHwIZIgAAAAZdEVYdFNvZnR3YXJlAHd3dy5pbmtzY2FwZS5vcmeb7jwaAAABIElEQVR4nO3asY2EMBQF0d2K2A4oYyOgI3IgQqI7mgULJHICW45A3M/67Gvrr3R+3/d9AAAAAAAAAAAAAAA8m1prXdc6pZRSa63f933f9w3AOqWU1lqnlFJKaa31+77v+wZgHSml1lrruq5TSiml1H3f930DsM6UUmqtdV3XKaWUUh9/fd83AOuUUmqtdV3XKaWUUh9/fd83AOuUUmqtdV3XKaWUUh9/fd83AOuUUmqtdV3XKaWUUh9/fd83AOuUUmqtdV3XKaWUUh9/fd83AOuUUmqtdV3XKaWUUh9/fd83AOuUUmqtdV3XKaWUUh9/fd83AOuUUmqtdV3XKaWUUh9/fd83AOuUUmqtdV3XKaWUUh9/fd83AAAAAAAAAAAAwP98A8vEeJhOJYScAAAAAElFTkSuQmCC" | base64 -d > app/src/main/res/mipmap-hdpi/ic_launcher.png
           
-          # Generate settings.gradle
+          # Generate settings.gradle - FIXED SYNTAX
           cat > settings.gradle << 'EOF'
-          pluginManagement { repositories { google() mavenCentral() gradlePluginPortal() } }
-          dependencyResolutionManagement { repositories { google() mavenCentral() } }
+          pluginManagement {
+              repositories {
+                  google()
+                  mavenCentral()
+                  gradlePluginPortal()
+              }
+          }
+          dependencyResolutionManagement {
+              repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+              repositories {
+                  google()
+                  mavenCentral()
+              }
+          }
           rootProject.name = "PlusSub"
           include ':app'
           EOF
           
           # Generate build.gradle (project)
           cat > build.gradle << 'EOF'
-          plugins {
-              id 'com.android.application' version '8.2.2' apply false
-              id 'org.jetbrains.kotlin.android' version '1.9.20' apply false
+          buildscript {
+              ext.kotlin_version = '1.9.20'
+              repositories {
+                  google()
+                  mavenCentral()
+              }
+              dependencies {
+                  classpath 'com.android.tools.build:gradle:8.2.2'
+                  classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+              }
           }
           EOF
           
@@ -165,9 +187,11 @@ jobs:
               id 'com.android.application'
               id 'org.jetbrains.kotlin.android'
           }
+          
           android {
               namespace 'com.plussub'
               compileSdk 34
+              
               defaultConfig {
                   applicationId "com.plussub"
                   minSdk 24
@@ -175,14 +199,24 @@ jobs:
                   versionCode 1
                   versionName "1.0"
               }
+              
+              buildTypes {
+                  release {
+                      minifyEnabled false
+                      proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+                  }
+              }
+              
               compileOptions {
                   sourceCompatibility JavaVersion.VERSION_17
                   targetCompatibility JavaVersion.VERSION_17
               }
+              
               kotlinOptions {
                   jvmTarget = '17'
               }
           }
+          
           dependencies {
               implementation 'androidx.core:core-ktx:1.12.0'
               implementation 'androidx.appcompat:appcompat:1.6.1'
@@ -213,6 +247,9 @@ jobs:
           DIR="$(cd "$(dirname "$0")" && pwd)"
           java -classpath "$DIR/gradle/wrapper/gradle-wrapper.jar" org.gradle.wrapper.GradleWrapperMain "$@"' > gradlew
           chmod +x gradlew
+          
+          # Create empty proguard file
+          touch app/proguard-rules.pro
 
       - name: Build APK
         run: ./gradlew assembleDebug
