@@ -19,33 +19,23 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Create Android project structure
+      - name: Create Android project
         run: |
-          # Create all necessary directories
+          # Create structure
           mkdir -p app/src/main/java/com/plussub
           mkdir -p app/src/main/res/values
-          mkdir -p app/src/main/res/mipmap-hdpi
-          mkdir -p app/src/main/res/mipmap-xhdpi
-          mkdir -p app/src/main/res/mipmap-xxhdpi
           
-          # Copy your single KT file
+          # Copy MainActivity
           cp MainActivity.kt app/src/main/java/com/plussub/MainActivity.kt
           
-          # Create AndroidManifest.xml
+          # AndroidManifest.xml
           cat > app/src/main/AndroidManifest.xml << 'EOF'
           <?xml version="1.0" encoding="utf-8"?>
           <manifest xmlns:android="http://schemas.android.com/apk/res/android"
               package="com.plussub">
               <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-              <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-              <application
-                  android:allowBackup="true"
-                  android:icon="@mipmap/ic_launcher"
-                  android:label="PlusSub"
-                  android:theme="@style/Theme.PlusSub">
-                  <activity
-                      android:name=".MainActivity"
-                      android:exported="true">
+              <application android:icon="@mipmap/ic_launcher" android:label="PlusSub">
+                  <activity android:name=".MainActivity" android:exported="true">
                       <intent-filter>
                           <action android:name="android.intent.action.MAIN" />
                           <category android:name="android.intent.category.LAUNCHER" />
@@ -55,19 +45,35 @@ jobs:
           </manifest>
           EOF
           
-          # Create strings.xml
+          # strings.xml
           cat > app/src/main/res/values/strings.xml << 'EOF'
-          <resources>
-              <string name="app_name">PlusSub</string>
-          </resources>
+          <resources><string name="app_name">PlusSub</string></resources>
           EOF
           
-          # Create simple blue icon (1x1 pixel blue PNG in base64)
-          echo "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==" | base64 -d > app/src/main/res/mipmap-hdpi/ic_launcher.png
-          cp app/src/main/res/mipmap-hdpi/ic_launcher.png app/src/main/res/mipmap-xhdpi/ic_launcher.png
-          cp app/src/main/res/mipmap-hdpi/ic_launcher.png app/src/main/res/mipmap-xxhdpi/ic_launcher.png
+          # Create simple blue icon (base64 1x1 blue pixel)
+          echo "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==" | base64 -d > app/src/main/res/ic_launcher.png
           
-          # Create build.gradle (app level) - FIXED VERSIONS
+          # settings.gradle
+          cat > settings.gradle << 'EOF'
+          pluginManagement {
+              repositories { google() mavenCentral() gradlePluginPortal() }
+          }
+          dependencyResolutionManagement {
+              repositories { google() mavenCentral() }
+          }
+          rootProject.name = "PlusSub"
+          include ':app'
+          EOF
+          
+          # Project build.gradle
+          cat > build.gradle << 'EOF'
+          plugins {
+              id 'com.android.application' version '8.2.2' apply false
+              id 'org.jetbrains.kotlin.android' version '1.9.20' apply false
+          }
+          EOF
+          
+          # App build.gradle - FIXED VERSIONS
           cat > app/build.gradle << 'EOF'
           plugins {
               id 'com.android.application'
@@ -86,19 +92,8 @@ jobs:
                   versionName "1.0"
               }
               
-              buildTypes {
-                  release {
-                      minifyEnabled false
-                      proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-                  }
-              }
-              
               buildFeatures {
                   compose true
-              }
-              
-              composeOptions {
-                  kotlinCompilerExtensionVersion '1.5.4'
               }
               
               compileOptions {
@@ -113,74 +108,25 @@ jobs:
           
           dependencies {
               implementation 'androidx.core:core-ktx:1.12.0'
-              implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.7.0'
-              implementation 'androidx.activity:activity-compose:1.8.0'
-              implementation platform('androidx.compose:compose-bom:2024.04.01')
-              implementation 'androidx.compose.ui:ui'
-              implementation 'androidx.compose.ui:ui-graphics'
-              implementation 'androidx.compose.ui:ui-tooling-preview'
-              implementation 'androidx.compose.material3:material3'
-              implementation 'androidx.compose.foundation:foundation'
-              debugImplementation 'androidx.compose.ui:ui-tooling'
+              implementation 'androidx.appcompat:appcompat:1.6.1'
+              implementation 'com.google.android.material:material:1.11.0'
+              implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
           }
           EOF
           
-          # Create empty proguard file
-          touch app/proguard-rules.pro
-          
-          # Create project build.gradle
-          cat > build.gradle << 'EOF'
-          buildscript {
-              ext.kotlin_version = '1.9.20'
-              repositories {
-                  google()
-                  mavenCentral()
-              }
-              dependencies {
-                  classpath 'com.android.tools.build:gradle:8.2.2'
-                  classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-              }
-          }
-          EOF
-          
-          # Create settings.gradle
-          cat > settings.gradle << 'EOF'
-          pluginManagement {
-              repositories {
-                  google()
-                  mavenCentral()
-                  gradlePluginPortal()
-              }
-          }
-          dependencyResolutionManagement {
-              repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
-              repositories {
-                  google()
-                  mavenCentral()
-              }
-          }
-          rootProject.name = "PlusSub"
-          include ':app'
-          EOF
-          
-          # Create gradle.properties
+          # gradle.properties
           cat > gradle.properties << 'EOF'
           org.gradle.jvmargs=-Xmx2048m
           android.useAndroidX=true
-          kotlin.code.style=official
-          android.suppressUnsupportedCompileSdk=34
           EOF
 
-      - name: Generate gradle wrapper
+      - name: Build with Gradle
         run: |
-          gradle wrapper --gradle-version=8.6
           chmod +x gradlew
-
-      - name: Build APK
-        run: ./gradlew assembleDebug --no-daemon
+          ./gradlew assembleDebug --stacktrace
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: PlusSub-App
+          name: PlusSub
           path: app/build/outputs/apk/debug/*.apk
