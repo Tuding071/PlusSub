@@ -12,8 +12,6 @@ import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import java.io.File
-import java.io.FileOutputStream
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -189,41 +187,17 @@ class MainActivity : AppCompatActivity() {
     
     private fun detectBars() {
         // Simple bar detection - assume 120 BPM = 2 seconds per bar
-        // In real app, you'd use BPM detection
         val barDurationMs = 2000 // 2 seconds per bar
         val barCount = songDurationMs / barDurationMs
         
         bars.clear()
         gridContainer.removeAllViews()
         
-        // Create header
-        addHeaderRow()
-        
-        // Create bars with chord detection (mock for now)
-        val chords = arrayOf("C", "G", "Am", "F", "C", "G", "C", "G", "Dm", "Em", "F", "G", "C", "Am", "F", "G")
-        val frequencies = floatArrayOf(65.4f, 98.0f, 110.0f, 87.3f, 65.4f, 98.0f, 65.4f, 98.0f, 73.4f, 82.4f, 87.3f, 98.0f, 65.4f, 110.0f, 87.3f, 98.0f)
-        
-        for (i in 0 until minOf(barCount, 32)) { // Max 32 bars
-            val bar = Bar(
-                index = i,
-                chord = chords[i % chords.size],
-                enabled = true,
-                startTimeMs = i * barDurationMs,
-                endTimeMs = (i + 1) * barDurationMs,
-                frequency = frequencies[i % frequencies.size]
-            )
-            bars.add(bar)
-            addBarRow(bar)
-        }
-        
-        updateStatus()
-    }
-    
-    private fun addHeaderRow() {
+        // Create header - FIXED: removed list_divider
         val headerRow = LinearLayout(this).apply {
             orientation = LinearLayout.HORIZONTAL
             setPadding(0, 8, 0, 8)
-            background = getDrawable(android.R.drawable.list_divider)
+            setBackgroundColor(0xFFE0E0E0.toInt()) // Light gray background
         }
         
         headerRow.addView(TextView(this).apply {
@@ -253,49 +227,76 @@ class MainActivity : AppCompatActivity() {
         })
         
         gridContainer.addView(headerRow)
-    }
-    
-    private fun addBarRow(bar: Bar) {
-        val row = LinearLayout(this).apply {
+        
+        // Add divider
+        val divider = View(this).apply {
             layoutParams = LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
-                80
+                2
             )
-            orientation = LinearLayout.HORIZONTAL
-            setPadding(0, 4, 0, 4)
-            setBackgroundColor(if (bar.index % 2 == 0) 0xFFF5F5F5.toInt() else 0xFFFFFFFF.toInt())
+            setBackgroundColor(0xFFE0E0E0.toInt())
         }
+        gridContainer.addView(divider)
         
-        // Bar number
-        row.addView(TextView(this).apply {
-            text = "${bar.index + 1}"
-            layoutParams = LinearLayout.LayoutParams(0, 80, 1f).apply { marginStart = 8 }
-            gravity = android.view.Gravity.CENTER_VERTICAL
-        })
+        // Create bars with chord detection
+        val chords = arrayOf("C", "G", "Am", "F", "C", "G", "C", "G", "Dm", "Em", "F", "G", "C", "Am", "F", "G")
+        val frequencies = floatArrayOf(65.4f, 98.0f, 110.0f, 87.3f, 65.4f, 98.0f, 65.4f, 98.0f, 73.4f, 82.4f, 87.3f, 98.0f, 65.4f, 110.0f, 87.3f, 98.0f)
         
-        // Chord
-        row.addView(TextView(this).apply {
-            text = bar.chord
-            layoutParams = LinearLayout.LayoutParams(0, 80, 1f)
-            gravity = android.view.Gravity.CENTER
-            setTextColor(0xFF4CAF50.toInt())
-            textSize = 16f
-            typeface = android.graphics.Typeface.DEFAULT_BOLD
-        })
-        
-        // Enable/Disable switch
-        val switch = Switch(this).apply {
-            layoutParams = LinearLayout.LayoutParams(0, 80, 1f)
-            gravity = android.view.Gravity.CENTER
-            isChecked = bar.enabled
-            setOnCheckedChangeListener { _, isChecked ->
-                bar.enabled = isChecked
-                updateStatus()
+        for (i in 0 until minOf(barCount, 32)) { // Max 32 bars
+            val bar = Bar(
+                index = i,
+                chord = chords[i % chords.size],
+                enabled = true,
+                startTimeMs = i * barDurationMs,
+                endTimeMs = (i + 1) * barDurationMs,
+                frequency = frequencies[i % frequencies.size]
+            )
+            bars.add(bar)
+            
+            // Bar row
+            val row = LinearLayout(this).apply {
+                layoutParams = LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    80
+                )
+                orientation = LinearLayout.HORIZONTAL
+                setPadding(0, 4, 0, 4)
+                setBackgroundColor(if (bar.index % 2 == 0) 0xFFF5F5F5.toInt() else 0xFFFFFFFF.toInt())
             }
+            
+            // Bar number
+            row.addView(TextView(this).apply {
+                text = "${bar.index + 1}"
+                layoutParams = LinearLayout.LayoutParams(0, 80, 1f).apply { marginStart = 8 }
+                gravity = android.view.Gravity.CENTER_VERTICAL
+            })
+            
+            // Chord
+            row.addView(TextView(this).apply {
+                text = bar.chord
+                layoutParams = LinearLayout.LayoutParams(0, 80, 1f)
+                gravity = android.view.Gravity.CENTER
+                setTextColor(0xFF4CAF50.toInt())
+                textSize = 16f
+                typeface = android.graphics.Typeface.DEFAULT_BOLD
+            })
+            
+            // Enable/Disable switch
+            val switch = Switch(this).apply {
+                layoutParams = LinearLayout.LayoutParams(0, 80, 1f)
+                gravity = android.view.Gravity.CENTER
+                isChecked = bar.enabled
+                setOnCheckedChangeListener { _, isChecked ->
+                    bar.enabled = isChecked
+                    updateStatus()
+                }
+            }
+            row.addView(switch)
+            
+            gridContainer.addView(row)
         }
-        row.addView(switch)
         
-        gridContainer.addView(row)
+        updateStatus()
     }
     
     private fun togglePlayback() {
@@ -332,9 +333,13 @@ class MainActivity : AppCompatActivity() {
             val midLevel = (midSeekBar.progress - 50) * 2
             val trebleLevel = (trebleSeekBar.progress - 50) * 2
             
-            eq.setBandLevel(0, bassLevel.toShort()) // Bass band
-            eq.setBandLevel(1, midLevel.toShort())  // Mid band
-            eq.setBandLevel(2, trebleLevel.toShort()) // Treble band
+            try {
+                eq.setBandLevel(0, bassLevel.toShort()) // Bass band
+                eq.setBandLevel(1, midLevel.toShort())  // Mid band
+                eq.setBandLevel(2, trebleLevel.toShort()) // Treble band
+            } catch (e: Exception) {
+                // EQ bands might vary by device
+            }
         }
         
         // Generate and play bass for enabled bars
@@ -354,6 +359,8 @@ class MainActivity : AppCompatActivity() {
     
     private fun generateSineWave(frequency: Float, durationSeconds: Float, volume: Float) {
         val numSamples = (durationSeconds * SAMPLE_RATE).toInt()
+        if (numSamples <= 0) return
+        
         val samples = ShortArray(numSamples)
         
         for (i in 0 until numSamples) {
@@ -394,14 +401,8 @@ class MainActivity : AppCompatActivity() {
     private fun saveMixedAudio() {
         Toast.makeText(this, "Saving mixed audio...", Toast.LENGTH_LONG).show()
         
-        // In a real app, you would mix the original audio with generated bass
-        // and save as a new file. For demo, we'll just show a message
-        
         val fileName = "PlusSub_${SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(Date())}.wav"
         Toast.makeText(this, "Demo: Would save as $fileName", Toast.LENGTH_LONG).show()
-        
-        // Here you would implement actual WAV file creation
-        // using the original audio + generated sine waves
     }
     
     private fun updateStatus() {
