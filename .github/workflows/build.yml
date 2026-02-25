@@ -31,82 +31,272 @@ jobs:
           # Copy your KT file
           cp MainActivity.kt app/src/main/java/com/plussub/MainActivity.kt
           
-          # Generate activity_main.xml
+          # Generate activity_main.xml (COMPLETE LAYOUT)
           cat > app/src/main/res/layout/activity_main.xml << 'EOF'
           <?xml version="1.0" encoding="utf-8"?>
           <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
               android:orientation="vertical"
-              android:padding="16dp">
-              
-              <TextView
-                  android:layout_width="wrap_content"
+              android:padding="16dp"
+              android:background="#FFFFFF"
+              android:showDividers="middle"
+              android:divider="?android:dividerHorizontal">
+
+              <!-- Header -->
+              <LinearLayout
+                  android:layout_width="match_parent"
                   android:layout_height="wrap_content"
-                  android:text="PlusSub"
-                  android:textSize="28sp"
-                  android:textColor="#2196F3"
-                  android:layout_gravity="center_horizontal"/>
-              
+                  android:orientation="horizontal"
+                  android:layout_marginBottom="16dp">
+
+                  <TextView
+                      android:layout_width="0dp"
+                      android:layout_height="wrap_content"
+                      android:layout_weight="1"
+                      android:text="PlusSub"
+                      android:textSize="32sp"
+                      android:textColor="#2196F3"
+                      android:textStyle="bold"/>
+
+                  <TextView
+                      android:id="@+id/songNameText"
+                      android:layout_width="wrap_content"
+                      android:layout_height="wrap_content"
+                      android:text="No song"
+                      android:textSize="14sp"
+                      android:maxLines="1"
+                      android:ellipsize="end"/>
+              </LinearLayout>
+
+              <!-- Status -->
               <TextView
                   android:id="@+id/statusText"
                   android:layout_width="match_parent"
                   android:layout_height="wrap_content"
-                  android:text="Load a song"
+                  android:text="Load a song to start"
                   android:padding="12dp"
                   android:background="#F0F0F0"
-                  android:layout_marginTop="16dp"/>
-              
+                  android:layout_marginBottom="16dp"/>
+
+              <!-- FL Studio Grid -->
+              <TextView
+                  android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:text="BAR GRID"
+                  android:textColor="#2196F3"
+                  android:textSize="12sp"
+                  android:layout_marginBottom="4dp"/>
+
               <ScrollView
                   android:layout_width="match_parent"
                   android:layout_height="200dp"
-                  android:layout_marginTop="16dp">
+                  android:background="#F5F5F5"
+                  android:padding="4dp"
+                  android:scrollbars="vertical">
+
                   <LinearLayout
                       android:id="@+id/gridContainer"
                       android:layout_width="match_parent"
                       android:layout_height="wrap_content"
                       android:orientation="vertical"/>
               </ScrollView>
-              
+
+              <!-- Sub Bass Section -->
               <TextView
                   android:layout_width="match_parent"
                   android:layout_height="wrap_content"
                   android:text="SUB BASS"
                   android:textColor="#2196F3"
-                  android:layout_marginTop="16dp"/>
-              
+                  android:textSize="12sp"
+                  android:layout_marginTop="16dp"
+                  android:layout_marginBottom="8dp"/>
+
+              <!-- Octave Control -->
               <LinearLayout
                   android:layout_width="match_parent"
                   android:layout_height="wrap_content"
                   android:orientation="horizontal"
                   android:background="#F0F0F0"
                   android:padding="12dp"
-                  android:layout_marginTop="8dp">
-                  <TextView android:text="Octave:" android:layout_width="80dp" android:layout_height="wrap_content"/>
-                  <Spinner android:id="@+id/octaveSpinner" android:layout_width="0dp" android:layout_height="40dp" android:layout_weight="1"/>
+                  android:layout_marginBottom="2dp">
+
+                  <TextView
+                      android:layout_width="80dp"
+                      android:layout_height="wrap_content"
+                      android:text="Octave:"
+                      android:textSize="14sp"
+                      android:gravity="center_vertical"/>
+
+                  <Spinner
+                      android:id="@+id/octaveSpinner"
+                      android:layout_width="0dp"
+                      android:layout_height="40dp"
+                      android:layout_weight="1"
+                      android:background="@android:drawable/btn_dropdown"
+                      android:spinnerMode="dropdown"/>
               </LinearLayout>
-              
+
+              <!-- Volume Control -->
               <LinearLayout
                   android:layout_width="match_parent"
                   android:layout_height="wrap_content"
                   android:orientation="horizontal"
                   android:background="#F0F0F0"
                   android:padding="12dp"
-                  android:layout_marginTop="2dp">
-                  <TextView android:text="Volume:" android:layout_width="80dp" android:layout_height="wrap_content"/>
-                  <SeekBar android:id="@+id/volumeSeekBar" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:max="100" android:progress="70"/>
-                  <TextView android:id="@+id/volumeValue" android:layout_width="40dp" android:layout_height="wrap_content" android:text="70%"/>
+                  android:layout_marginBottom="2dp">
+
+                  <TextView
+                      android:layout_width="80dp"
+                      android:layout_height="wrap_content"
+                      android:text="Volume:"
+                      android:textSize="14sp"
+                      android:gravity="center_vertical"/>
+
+                  <SeekBar
+                      android:id="@+id/volumeSeekBar"
+                      android:layout_width="0dp"
+                      android:layout_height="wrap_content"
+                      android:layout_weight="1"
+                      android:max="100"
+                      android:progress="70"/>
+
+                  <TextView
+                      android:id="@+id/volumeValue"
+                      android:layout_width="40dp"
+                      android:layout_height="wrap_content"
+                      android:text="70%"
+                      android:textSize="14sp"
+                      android:gravity="center"/>
               </LinearLayout>
-              
+
+              <!-- EQ Section -->
+              <TextView
+                  android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:text="EQ (SONG ONLY)"
+                  android:textColor="#FF9800"
+                  android:textSize="12sp"
+                  android:layout_marginTop="16dp"
+                  android:layout_marginBottom="8dp"/>
+
+              <!-- Bass EQ -->
+              <LinearLayout
+                  android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:orientation="horizontal"
+                  android:background="#F0F0F0"
+                  android:padding="12dp"
+                  android:layout_marginBottom="2dp">
+
+                  <TextView
+                      android:layout_width="60dp"
+                      android:layout_height="wrap_content"
+                      android:text="Bass:"
+                      android:textSize="14sp"
+                      android:gravity="center_vertical"/>
+
+                  <SeekBar
+                      android:id="@+id/bassSeekBar"
+                      android:layout_width="0dp"
+                      android:layout_height="wrap_content"
+                      android:layout_weight="1"
+                      android:max="100"
+                      android:progress="50"/>
+              </LinearLayout>
+
+              <!-- Mid EQ -->
+              <LinearLayout
+                  android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:orientation="horizontal"
+                  android:background="#F0F0F0"
+                  android:padding="12dp"
+                  android:layout_marginBottom="2dp">
+
+                  <TextView
+                      android:layout_width="60dp"
+                      android:layout_height="wrap_content"
+                      android:text="Mid:"
+                      android:textSize="14sp"
+                      android:gravity="center_vertical"/>
+
+                  <SeekBar
+                      android:id="@+id/midSeekBar"
+                      android:layout_width="0dp"
+                      android:layout_height="wrap_content"
+                      android:layout_weight="1"
+                      android:max="100"
+                      android:progress="50"/>
+              </LinearLayout>
+
+              <!-- Treble EQ -->
+              <LinearLayout
+                  android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:orientation="horizontal"
+                  android:background="#F0F0F0"
+                  android:padding="12dp"
+                  android:layout_marginBottom="2dp">
+
+                  <TextView
+                      android:layout_width="60dp"
+                      android:layout_height="wrap_content"
+                      android:text="Treble:"
+                      android:textSize="14sp"
+                      android:gravity="center_vertical"/>
+
+                  <SeekBar
+                      android:id="@+id/trebleSeekBar"
+                      android:layout_width="0dp"
+                      android:layout_height="wrap_content"
+                      android:layout_weight="1"
+                      android:max="100"
+                      android:progress="50"/>
+              </LinearLayout>
+
+              <!-- Control Buttons -->
               <LinearLayout
                   android:layout_width="match_parent"
                   android:layout_height="wrap_content"
                   android:orientation="horizontal"
                   android:layout_marginTop="20dp">
-                  <Button android:id="@+id/loadBtn" android:layout_width="0dp" android:layout_height="50dp" android:layout_weight="1" android:text="LOAD" android:backgroundTint="#2196F3" android:layout_marginRight="4dp"/>
-                  <Button android:id="@+id/playBtn" android:layout_width="0dp" android:layout_height="50dp" android:layout_weight="1" android:text="PLAY" android:backgroundTint="#4CAF50" android:layout_marginLeft="4dp" android:layout_marginRight="4dp"/>
-                  <Button android:id="@+id/saveBtn" android:layout_width="0dp" android:layout_height="50dp" android:layout_weight="1" android:text="SAVE" android:backgroundTint="#F44336" android:layout_marginLeft="4dp"/>
+
+                  <Button
+                      android:id="@+id/loadBtn"
+                      android:layout_width="0dp"
+                      android:layout_height="50dp"
+                      android:layout_weight="1"
+                      android:text="LOAD"
+                      android:backgroundTint="#2196F3"
+                      android:layout_marginRight="4dp"
+                      android:textColor="#FFFFFF"
+                      android:textStyle="bold"/>
+
+                  <Button
+                      android:id="@+id/playBtn"
+                      android:layout_width="0dp"
+                      android:layout_height="50dp"
+                      android:layout_weight="1"
+                      android:text="PLAY"
+                      android:backgroundTint="#4CAF50"
+                      android:layout_marginLeft="4dp"
+                      android:layout_marginRight="4dp"
+                      android:textColor="#FFFFFF"
+                      android:textStyle="bold"/>
+
+                  <Button
+                      android:id="@+id/saveBtn"
+                      android:layout_width="0dp"
+                      android:layout_height="50dp"
+                      android:layout_weight="1"
+                      android:text="SAVE"
+                      android:backgroundTint="#F44336"
+                      android:layout_marginLeft="4dp"
+                      android:textColor="#FFFFFF"
+                      android:textStyle="bold"/>
               </LinearLayout>
+
           </LinearLayout>
           EOF
           
@@ -127,13 +317,22 @@ jobs:
           <?xml version="1.0" encoding="utf-8"?>
           <manifest xmlns:android="http://schemas.android.com/apk/res/android"
               package="com.plussub">
+
               <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+              <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+              <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+
               <application
                   android:allowBackup="true"
                   android:icon="@mipmap/ic_launcher"
                   android:label="PlusSub"
-                  android:theme="@style/Theme.AppCompat.Light.DarkActionBar">
-                  <activity android:name=".MainActivity" android:exported="true">
+                  android:theme="@style/Theme.AppCompat.Light.DarkActionBar"
+                  android:requestLegacyExternalStorage="true">
+
+                  <activity
+                      android:name=".MainActivity"
+                      android:exported="true"
+                      android:configChanges="orientation|screenSize">
                       <intent-filter>
                           <action android:name="android.intent.action.MAIN" />
                           <category android:name="android.intent.category.LAUNCHER" />
@@ -144,9 +343,9 @@ jobs:
           EOF
           
           # Generate blue icon
-          echo "iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAAAXNSR0IArs4c6QAAAARzQklUCAgICHwIZIgAAAAZdEVYdFNvZnR3YXJlAHd3dy5pbmtzY2FwZS5vcmeb7jwaAAABIElEQVR4nO3asY2EMBQF0d2K2A4oYyOgI3IgQqI7mgULJHICW45A3M/67Gvrr3R+3/d9AAAAAAAAAAAAAAA8m1prXdc6pZRSa63f933f9w3AOqWU1lqnlFJKaa31+77v+wZgHSml1lrruq5TSiml1H3f930DsM6UUmqtdV3XKaWUUh9/fd83AOuUUmqtdV3XKaWUUh9/fd83AOuUUmqtdV3XKaWUUh9/fd83AOuUUmqtdV3XKaWUUh9/fd83AOuUUmqtdV3XKaWUUh9/fd83AOuUUmqtdV3XKaWUUh9/fd83AOuUUmqtdV3XKaWUUh9/fd83AOuUUmqtdV3XKaWUUh9/fd83AOuUUmqtdV3XKaWUUh9/fd83AAAAAAAAAAAAwP98A8vEeJhOJYScAAAAAElFTkSuQmCC" | base64 -d > app/src/main/res/mipmap-hdpi/ic_launcher.png
+          echo "iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAAAXNSR0IArs4c6QAAAARzQklUCAgICHwIZIgAAAAZdEVYdFNvZnR3YXJlAHd3dy5pbmtzY2FwZS5vcmeb7jwaAAABIElEQVR4nO3asY2EMBQF0d2K2A4oYyOgI3IgQqI7mgULJHICW45A3M/67Gvrr3R+3/d9AAAAAAAAAAAAAAA8m1prXdc6pZRSa63f933f9w3AOqWU1lqnlFJKaa31+77v+wZgHSml1lrruq5TSiml1H3f930DsM6UUmqtdV3XKaWUUh9/fd83AOuUUmqtdV3XKaWUUh9/fd83AOuUUmqtdV3XKaWUUh9/fd83AOuUUmqtdV3XKaWUUh9/fd83AOuUUmqtdV3XKaWUUh9/fd83AOuUUmqtdV3XKaWUUh9/fd83AOuUUmqtdV3XKaWUUh9/fd83AOuUUmqtdV3XKaWUUh9/fd83AAAAAAAAAAAAwP98A8vEeJhOJYScAAAAAElFTkSuQmCC" | base64 -d > app/src/main/res/mipmap-hdpi/ic_launcher.png
           
-          # Generate settings.gradle - FIXED SYNTAX
+          # Generate settings.gradle
           cat > settings.gradle << 'EOF'
           pluginManagement {
               repositories {
@@ -228,6 +427,7 @@ jobs:
           cat > gradle.properties << 'EOF'
           org.gradle.jvmargs=-Xmx2048m
           android.useAndroidX=true
+          kotlin.code.style=official
           EOF
           
           # Generate gradle wrapper
