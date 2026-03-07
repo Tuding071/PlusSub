@@ -1,4 +1,4 @@
-name: Build PlusSub APK
+name: Build PlusSub
 
 on:
 workflow_dispatch:
@@ -8,177 +8,225 @@ build:
 runs-on: ubuntu-latest
 
 steps:
-- name: Checkout
-  uses: actions/checkout@v4
 
-- name: Setup JDK
-  uses: actions/setup-java@v4
-  with:
-    distribution: temurin
-    java-version: 17
+  - name: Checkout
+    uses: actions/checkout@v4
 
-- name: Setup Android SDK
-  uses: android-actions/setup-android@v3
+  - name: Setup Java
+    uses: actions/setup-java@v4
+    with:
+      distribution: temurin
+      java-version: 17
 
-- name: Create Android project structure
-  run: |
-    mkdir -p app/src/main/java/com/plussub
-    mkdir -p app/src/main/res/layout
-    mkdir -p app/src/main/cpp
-    mkdir -p app/src/main
+  - name: Setup Android SDK
+    uses: android-actions/setup-android@v3
 
-- name: Write AndroidManifest
-  run: |
-    cat <<EOF > app/src/main/AndroidManifest.xml
-    <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-        package="com.plussub">
+  - name: Create project structure
+    run: |
+      mkdir -p app/src/main/java/com/plussub
+      mkdir -p app/src/main/cpp
+      mkdir -p app/src/main/res/layout
 
-        <application
-            android:label="PlusSub"
-            android:allowBackup="true">
-            <activity android:name=".MainActivity">
-                <intent-filter>
-                    <action android:name="android.intent.action.MAIN"/>
-                    <category android:name="android.intent.category.LAUNCHER"/>
-                </intent-filter>
-            </activity>
-        </application>
+  - name: Write settings.gradle
+    run: |
+      cat <<EOF > settings.gradle
+      rootProject.name="PlusSub"
+      include ':app'
+      EOF
 
-    </manifest>
-    EOF
+  - name: Write root build.gradle
+    run: |
+      cat <<EOF > build.gradle
+      buildscript {
+          repositories {
+              google()
+              mavenCentral()
+          }
+          dependencies {
+              classpath "com.android.tools.build:gradle:8.2.2"
+          }
+      }
 
-- name: Write MainActivity
-  run: |
-    cat <<EOF > app/src/main/java/com/plussub/MainActivity.kt
-    package com.plussub
+      allprojects {
+          repositories {
+              google()
+              mavenCentral()
+          }
+      }
+      EOF
 
-    import android.app.Activity
-    import android.os.Bundle
-    import android.widget.TextView
+  - name: Write app build.gradle
+    run: |
+      cat <<EOF > app/build.gradle
+      plugins {
+          id 'com.android.application'
+      }
 
-    class MainActivity : Activity() {
+      android {
+          namespace "com.plussub"
+          compileSdk 34
 
-        external fun processAudio(input:String, output:String)
+          defaultConfig {
+              applicationId "com.plussub"
+              minSdk 24
+              targetSdk 34
+              versionCode 1
+              versionName "1.0"
 
-        override fun onCreate(savedInstanceState: Bundle?) {
-            super.onCreate(savedInstanceState)
+              externalNativeBuild {
+                  cmake {
+                      cppFlags "-O3"
+                  }
+              }
+          }
 
-            val tv = TextView(this)
-            tv.text = "PlusSub Bass Generator"
-            setContentView(tv)
-        }
+          externalNativeBuild {
+              cmake {
+                  path "src/main/cpp/CMakeLists.txt"
+              }
+          }
 
-        companion object {
-            init {
-                System.loadLibrary("plussub")
-            }
-        }
-    }
-    EOF
+          buildTypes {
+              release {
+                  minifyEnabled false
+              }
+          }
+      }
 
-- name: Write C++ Bass Engine
-  run: |
-    cat <<EOF > app/src/main/cpp/plussub.cpp
-    #include <jni.h>
-    #include <math.h>
+      dependencies {
+      }
+      EOF
 
-    extern "C"
-    JNIEXPORT void JNICALL
-    Java_com_plussub_MainActivity_processAudio(
-        JNIEnv* env,
-        jobject,
-        jstring input,
-        jstring output) {
+  - name: Write AndroidManifest
+    run: |
+      cat <<EOF > app/src/main/AndroidManifest.xml
+      <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+          package="com.plussub">
 
-        // Placeholder audio processing
-    }
-    EOF
+          <application
+              android:label="PlusSub"
+              android:allowBackup="true">
 
-- name: Write CMake
-  run: |
-    cat <<EOF > app/src/main/cpp/CMakeLists.txt
-    cmake_minimum_required(VERSION 3.22)
+              <activity android:name=".MainActivity">
+                  <intent-filter>
+                      <action android:name="android.intent.action.MAIN"/>
+                      <category android:name="android.intent.category.LAUNCHER"/>
+                  </intent-filter>
+              </activity>
 
-    add_library(plussub SHARED
-        plussub.cpp)
+          </application>
+      </manifest>
+      EOF
 
-    find_library(log-lib log)
+  - name: Write Layout
+    run: |
+      cat <<EOF > app/src/main/res/layout/activity_main.xml
+      <?xml version="1.0" encoding="utf-8"?>
+      <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+          android:orientation="vertical"
+          android:layout_width="match_parent"
+          android:layout_height="match_parent">
 
-    target_link_libraries(plussub
-        \${log-lib})
-    EOF
+          <TextView
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:text="PlusSub Bass Generator"/>
 
-- name: Write Gradle
-  run: |
-    cat <<EOF > build.gradle
-    buildscript {
-        repositories {
-            google()
-            mavenCentral()
-        }
-        dependencies {
-            classpath 'com.android.tools.build:gradle:8.2.2'
-        }
-    }
+      </LinearLayout>
+      EOF
 
-    allprojects {
-        repositories {
-            google()
-            mavenCentral()
-        }
-    }
-    EOF
+  - name: Write MainActivity
+    run: |
+      cat <<EOF > app/src/main/java/com/plussub/MainActivity.kt
+      package com.plussub
 
-- name: Write App Gradle
-  run: |
-    cat <<EOF > app/build.gradle
-    plugins {
-        id 'com.android.application'
-    }
+      import android.app.Activity
+      import android.os.Bundle
 
-    android {
-        namespace "com.plussub"
-        compileSdk 34
+      class MainActivity : Activity() {
 
-        defaultConfig {
-            applicationId "com.plussub"
-            minSdk 24
-            targetSdk 34
-            versionCode 1
-            versionName "1.0"
+          external fun generateBass(input:String, output:String)
 
-            externalNativeBuild {
-                cmake {
-                    cppFlags ""
-                }
-            }
-        }
+          override fun onCreate(savedInstanceState: Bundle?) {
+              super.onCreate(savedInstanceState)
+              setContentView(R.layout.activity_main)
+          }
 
-        externalNativeBuild {
-            cmake {
-                path "src/main/cpp/CMakeLists.txt"
-            }
-        }
-    }
+          companion object {
+              init {
+                  System.loadLibrary("plussub")
+              }
+          }
+      }
+      EOF
 
-    dependencies {
-    }
-    EOF
+  - name: Write CMake
+    run: |
+      cat <<EOF > app/src/main/cpp/CMakeLists.txt
+      cmake_minimum_required(VERSION 3.22)
 
-- name: Create settings.gradle
-  run: |
-    echo "include ':app'" > settings.gradle
+      add_library(plussub SHARED
+          plussub.cpp)
 
-- name: Generate Gradle Wrapper
-  run: |
-    gradle wrapper
+      find_library(log-lib log)
 
-- name: Build APK
-  run: |
-    ./gradlew assembleDebug
+      target_link_libraries(plussub
+          \${log-lib})
+      EOF
 
-- name: Upload APK
-  uses: actions/upload-artifact@v4
-  with:
-    name: PlusSub-APK
-    path: app/build/outputs/apk/debug/app-debug.apk
+  - name: Write C++ Audio Engine
+    run: |
+      cat <<EOF > app/src/main/cpp/plussub.cpp
+      #include <jni.h>
+      #include <math.h>
+      #include <vector>
+
+      float generateSine(float phase) {
+          return sinf(phase * 2 * M_PI);
+      }
+
+      extern "C"
+      JNIEXPORT void JNICALL
+      Java_com_plussub_MainActivity_generateBass(
+              JNIEnv* env,
+              jobject,
+              jstring input,
+              jstring output) {
+
+          const int sampleRate = 44100;
+          const float freq = 55.0;
+
+          std::vector<float> buffer(sampleRate * 5);
+
+          float phase = 0.0;
+
+          for(size_t i=0;i<buffer.size();i++) {
+
+              float env = exp(-3.0 * (i % 22050) / 22050.0);
+
+              buffer[i] = generateSine(phase) * env * 0.5;
+
+              phase += freq / sampleRate;
+
+              if(phase > 1.0)
+                  phase -= 1.0;
+          }
+      }
+      EOF
+
+  - name: Install Gradle
+    run: |
+      sudo apt-get update
+      sudo apt-get install -y gradle
+
+  - name: Generate wrapper
+    run: gradle wrapper
+
+  - name: Build APK
+    run: ./gradlew assembleDebug
+
+  - name: Upload APK
+    uses: actions/upload-artifact@v4
+    with:
+      name: PlusSub-apk
+      path: app/build/outputs/apk/debug/app-debug.apk
